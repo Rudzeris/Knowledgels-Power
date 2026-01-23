@@ -8,9 +8,9 @@ namespace CodeBase.Infrastructure
         public readonly GameStateMachine stateMachine;
         public static IInputService InputService;
 
-        public Game()
+        public Game(ICoroutineRunner coroutineRunner)
         {
-            stateMachine = new GameStateMachine();
+            stateMachine = new GameStateMachine(new SceneLoader(coroutineRunner));
         }
     }
 }
