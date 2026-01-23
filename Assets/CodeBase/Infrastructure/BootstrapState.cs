@@ -6,6 +6,7 @@ namespace CodeBase.Infrastructure
     public class BootstrapState : IState
     {
         private const string Initial = "Initial";
+        private const string Main = "Main";
         private readonly GameStateMachine _gameStateMachine;
         private SceneLoader _sceneLoader;
         
@@ -23,6 +24,7 @@ namespace CodeBase.Infrastructure
 
         private void EnterLoadLevel()
         {
+            _gameStateMachine.Enter<LoadlLevelState,string>(Main);
         }
 
         private void RegisterServices()
@@ -39,9 +41,7 @@ namespace CodeBase.Infrastructure
             if (Application.isEditor)
                 return new StandaloneInputService();
             else
-            {
                 return new MobileInputService();
-            }
         }
     }
 }

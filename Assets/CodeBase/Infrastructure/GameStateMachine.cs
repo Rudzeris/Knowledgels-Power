@@ -5,37 +5,37 @@ namespace CodeBase.Infrastructure
 {
     public class GameStateMachine
     {
-        private readonly Dictionary<Type,IExitable> _states;
+        private readonly Dictionary<Type, IExitable> _states;
         private IExitable _currentState;
-        
+
         public GameStateMachine(SceneLoader sceneLoader)
         {
-            _states = new ()
+            _states = new()
             {
-                [typeof(BootstrapState)] = new BootstrapState(this,sceneLoader)
+                [typeof(BootstrapState)] = new BootstrapState(this, sceneLoader),
+                [typeof(LoadlLevelState)] = new LoadlLevelState(this, sceneLoader)
             };
         }
 
-        public void Enter<TState>() where TState : IExitable
+        public void Enter<TState>() where TState : class, IState
         {
-            ChangeState<TState>();
-
-            (_currentState as IState)?.Enter();
+            ChangeState<TState>()?.Enter();
         }
 
-        public void Enter<TState, TParam>(TParam arg) where TState : IExitable
+        public void Enter<TState, TParam>(TParam arg) where TState : class, IStateParam<TParam>
         {
-            ChangeState<TState>();
-            
-            (_currentState as IStateParam<TParam>)?.Enter(arg);
+            ChangeState<TState>()?.Enter(arg);
         }
 
-        private void ChangeState<TState>() where TState : IExitable
+        private TState ChangeState<TState>() where TState : class, IExitable
         {
             _currentState?.Exit();
 
-            var state = _states[typeof(TState)];
+            var state = GetState<TState>();
             _currentState = state;
+            return state;
         }
+
+        private TState GetState<TState>() where TState : class, IExitable => _states[typeof(TState)] as TState;
     }
 }
