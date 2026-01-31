@@ -1,9 +1,11 @@
-﻿using UnityEngine;
+﻿using CodeBase.Logic;
+using UnityEngine;
 
 namespace CodeBase.Infrastructure
 {
     public class GameBootstrapper : MonoBehaviour, ICoroutineRunner
     {
+        public LoadingCurtain loadingCurtain;
         private Game _game;
         private static GameBootstrapper _instance;
 
@@ -16,9 +18,9 @@ namespace CodeBase.Infrastructure
             }
 
             _instance = this;
-            _game = new Game(this);
+            _game = new Game(this, loadingCurtain);
             _game.stateMachine.Enter<BootstrapState>();
-            
+
             DontDestroyOnLoad(this);
         }
     }
