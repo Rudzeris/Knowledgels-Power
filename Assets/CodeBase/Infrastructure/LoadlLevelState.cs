@@ -6,6 +6,7 @@ namespace CodeBase.Infrastructure
 {
     public class LoadlLevelState : IStateParam<string>
     {
+        private const string Initialpoint = "InitialPoint";
         private readonly GameStateMachine _gameStateMachine;
         private readonly SceneLoader _sceneLoader;
 
@@ -17,7 +18,7 @@ namespace CodeBase.Infrastructure
 
         public void Enter(string sceneName)
         {
-            _sceneLoader.Load(sceneName,OnLoaded);
+            _sceneLoader.Load(sceneName, OnLoaded);
         }
 
         public void Exit()
@@ -26,8 +27,11 @@ namespace CodeBase.Infrastructure
 
         private void OnLoaded()
         {
-            var hero = Instantiate("Hero/hero");
+            var initialPoint = GameObject.FindGameObjectWithTag(Initialpoint);
+
+            var hero = Instantiate("Hero/hero", initialPoint.transform.position);
             CameraFollow(hero);
+
             Instantiate("HUD/Hud");
         }
 
@@ -37,7 +41,13 @@ namespace CodeBase.Infrastructure
             return Object.Instantiate(prefab);
         }
 
-        private void CameraFollow(GameObject target) 
+        private static GameObject Instantiate(string path, Vector3 at)
+        {
+            var prefab = Resources.Load<GameObject>(path);
+            return Object.Instantiate(prefab, at, Quaternion.identity);
+        }
+
+        private void CameraFollow(GameObject target)
             => Camera.main.GetComponent<CameraFollow>().Follow(target);
     }
 }
