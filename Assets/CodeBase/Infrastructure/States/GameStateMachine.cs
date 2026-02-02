@@ -1,20 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using CodeBase.Infrastructure.Factory;
+using CodeBase.Infrastructure.Services;
 using CodeBase.Logic;
 
-namespace CodeBase.Infrastructure
+namespace CodeBase.Infrastructure.States
 {
     public class GameStateMachine
     {
         private readonly Dictionary<Type, IExitable> _states;
         private IExitable _currentState;
 
-        public GameStateMachine(SceneLoader sceneLoader, LoadingCurtain loadingCurtain)
+        public GameStateMachine(SceneLoader sceneLoader, LoadingCurtain loadingCurtain, AllServices services)
         {
             _states = new()
             {
-                [typeof(BootstrapState)] = new BootstrapState(this, sceneLoader),
-                [typeof(LoadlLevelState)] = new LoadlLevelState(this, sceneLoader, loadingCurtain),
+                [typeof(BootstrapState)] = new BootstrapState(this, sceneLoader, services),
+                [typeof(LoadlLevelState)] = new LoadlLevelState(this, sceneLoader, loadingCurtain,
+                    services.Single<IGameFactory>()),
                 [typeof(GameLoopState)] = new GameLoopState(this, sceneLoader)
             };
         }
